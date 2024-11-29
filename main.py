@@ -1,9 +1,32 @@
+
+"""
+main.py
+This module defines a FastAPI application for the Zamunda API. It includes
+routes for searching the Zamunda API with optional caching and a default
+root route. The application also includes a background thread for cleaning
+up expired cache entries.
+Modules:
+    logging: Provides logging capabilities.
+    threading: Provides threading capabilities.
+    fastapi: Provides FastAPI framework for building web APIs.
+    uvicorn: Provides ASGI server for serving FastAPI applications.
+    zamunda: Provides Zamunda API client.
+    datetime: Provides date and time manipulation capabilities.
+Functions:
+    app_lifespan: Defines the lifespan event handlers for the FastAPI app.
+    read_root: Default route that returns the API version.
+    search: Route for searching the Zamunda API with optional caching.
+Constants:
+    CACHE_EXPIRATION: The duration for which cache entries are considered valid.
+Usage:
+    Run this module directly to start the FastAPI server with Uvicorn.
+"""
+import logging
+import threading
+from datetime import datetime, timedelta
 import fastapi
 import uvicorn
 from zamunda import Zamunda
-from datetime import datetime, timedelta
-import threading
-import logging
 
 logger = logging.getLogger("uvicorn")
 logger.info("Starting server...")
@@ -14,8 +37,8 @@ z = Zamunda()
 cache = {}
 CACHE_EXPIRATION = timedelta(minutes=60)
 
-# Define a FastAPI app with lifespan event handlers
-def app_lifespan(app: fastapi.FastAPI):
+def app_lifespan(_: fastapi.FastAPI):
+    """Define a FastAPI app with lifespan event handlers"""
     def cleanup_cache():
         while True:
             current_time = datetime.now()
@@ -23,10 +46,10 @@ def app_lifespan(app: fastapi.FastAPI):
                 key for key, value in cache.items()
                 if value['timestamp'] < current_time - CACHE_EXPIRATION
             ]
-            logger.info(f"Cleaning up {len(keys_to_delete)} expired cache entries")
+            logger.info("Cleaning up %d expired cache entries", len(keys_to_delete))
             for key in keys_to_delete:
                 del cache[key]
-                logger.info(f"Deleted expired cache entry: {key}")
+                logger.info("Deleted expired cache entry: %s", key)
             # Sleep for some time before next cleanup
             threading.Event().wait(60 * 5)  # Every 5 minutes
 
@@ -40,10 +63,17 @@ app = fastapi.FastAPI(lifespan=app_lifespan)
 
 @app.get("/")
 def read_root():
+    """default route"""
     return "Zamunda API v1"
 
 @app.get("/search")
-def search(q: str, user: str, password: str, force_search: bool = False, provide_magnet: bool = False):
+def search(
+    q: str,
+    user: str,
+    password: str,
+    force_search: bool = False,
+    provide_magnet: bool = False
+    ):
     """
     Search the Zamunda API with optional caching.
 
