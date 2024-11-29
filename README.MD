@@ -83,7 +83,7 @@ curl "http://localhost:8000/search?q=Deadpool%202024&user={вашето_име}&
 [
   {
     "name": "Deadpool & Wolverine / Дедпул и Върколака (2024)",
-    "magnetlink": "magnet:?xt=urn:btih:c571df4d6b9821a0b86c80828f0262f8cf23f0ec&dn=Deadpool.%26.Wolverine.2024.1080p.WEBRip.DDP5.1.Atmos.H.265-WAR",
+    "magnetlink": "magnet:?xt=urn:btih:...",
     "seeders": "673",
     "bg_audio": false
   }
