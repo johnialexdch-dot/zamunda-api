@@ -8,7 +8,10 @@ Classes:
 """
 from bs4 import BeautifulSoup as bs
 from requests import Session
-from login_headers import login_headers
+try:
+    from .login_headers import login_headers
+except ImportError:
+    from zamunda_api.login_headers import login_headers
 
 class Zamunda:
     """
