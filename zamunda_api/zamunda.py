@@ -8,7 +8,7 @@ Classes:
 """
 from bs4 import BeautifulSoup as bs
 from requests import Session
-from zamunda_api.login_headers import login_headers
+from login_headers import login_headers
 
 class Zamunda:
     """
@@ -63,17 +63,19 @@ class Zamunda:
             hrefs = tds[1].find('div').find_all('a')
             seeds = tds[-2].get_text()
             imgs = tds[1].find_all('img')
+            size = tds[-4].get_text()
             audio = True if any([i.get('src').endswith("bgaudio.png") for i in imgs]) else False
             for href in hrefs:
                 href = href['href']
-                if href.startswith('/magnetlink'):
-                    data.append(
-                        {
-                            "name": name, 
-                            "magnetlink": self.get_download_link(href) if provide_magnet else f"{self.base}{href}", 
-                            'seeders': seeds, 
-                            'bg_audio': audio
-                    })
+                # if href.startswith('/magnetlink'):
+                data.append(
+                    {
+                        "name": name, 
+                        "magnetlink": self.get_download_link(href) if provide_magnet else f"{self.base}{href}", 
+                        'seeders': seeds, 
+                        'bg_audio': audio,
+                        'size': size
+                })
         return data
     def get_download_link(self,href):
         """

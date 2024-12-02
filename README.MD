@@ -92,7 +92,8 @@ curl "http://localhost:8000/search?q=Deadpool%202024&user={вашето_име}&
     "name": "Deadpool & Wolverine / Дедпул и Върколака (2024)",
     "magnetlink": "magnet:?xt=urn:btih:...",
     "seeders": "673",
-    "bg_audio": false
+    "bg_audio": false,
+    "size": "3.56GB"
   }
 ]
 ```

@@ -26,7 +26,7 @@ import threading
 from datetime import datetime, timedelta
 import fastapi
 import uvicorn
-from zamunda_api.zamunda import Zamunda
+from zamunda import Zamunda
 
 logger = logging.getLogger("uvicorn")
 logger.info("Starting server...")
