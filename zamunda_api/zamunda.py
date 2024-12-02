@@ -70,8 +70,8 @@ class Zamunda:
             audio = True if any([i.get('src').endswith("bgaudio.png") for i in imgs]) else False
             for href in hrefs:
                 href = href['href']
-                # if href.startswith('/magnetlink'):
-                data.append(
+                if href.startswith('/magnetlink'):#must include magnetlink
+                    data.append(
                     {
                         "name": name, 
                         "magnetlink": self.get_download_link(href) if provide_magnet else f"{self.base}{href}", 
