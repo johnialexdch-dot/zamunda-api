@@ -1,6 +1,5 @@
 beautifulsoup4==4.12.3
 fastapi==0.115.6
 Requests==2.32.3
-setuptools==65.5.0
 torrentool==1.2.0
 uvicorn==0.32.1
