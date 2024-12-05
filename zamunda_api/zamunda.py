@@ -10,10 +10,12 @@ import time
 from bs4 import BeautifulSoup as bs
 from requests import Session, Timeout
 try:
-    from .login_headers import login_headers
+    from login_headers import login_headers
 except ImportError:
     from zamunda_api.login_headers import login_headers
 from requests.exceptions import RequestException
+from torrentool.api import Torrent
+
 
 class Zamunda:
     """
@@ -74,7 +76,8 @@ class Zamunda:
                 raise
 
         raise RuntimeError("Login failed after multiple attempts.")
-    def search(self, ss:str, user:str, password:str, provide_magnet:bool=False):
+    
+    def search(self, ss:str, user:str, password:str, provide_magnet:bool=False, provide_infohash:bool=False):
         """
         Searches for torrents on the Zamunda website.
         :param ss: The search string to search for.
@@ -115,53 +118,38 @@ class Zamunda:
             audio = True if any([i.get('src').endswith("bgaudio.png") for i in imgs]) else False
             for href in hrefs:
                 href = href['href']
-                if href.startswith('/magnetlink'):#must include magnetlink
+                if href.startswith('/download.php'):#must include magnetlink
+                    torrent = self.get_torrent(href)
                     data.append(
                     {
                         "name": name, 
-                        "magnetlink": self.get_download_link(href) if provide_magnet else f"{self.base}{href}", 
+                        "magnetlink": torrent.magnet_link if provide_magnet else f"{self.base}{href}", 
                         'seeders': seeds, 
                         'bg_audio': audio,
-                        'size': size
-                })
+                        'size': size,
+                        'infohash': torrent.info_hash if provide_infohash else None
+                    })
         return data
-    def get_download_link(self, href):
+    
+    def get_torrent(self,href):
         """
-        Gets the download link for a torrent.
-        Uses exponential backoff to avoid overloading the server.
-        :param href: The href to get the download link for.
+        Fetches a torrent file from the given href and returns a Torrent object.
+        Args:
+            href (str): The relative URL path to the torrent file.
+        Returns:
+            Torrent: A Torrent object if the request is successful.
+            None: If the request fails or the status code is not 200.
+        Raises:
+            requests.exceptions.RequestException: If there is an issue with the HTTP request.
         """
         url = f"{self.base}{href}"
-        max_retries = 5  # Maximum number of retries
-        backoff_factor = 2  # Exponential backoff multiplier
-        initial_delay = 1  # Initial delay in seconds
-        
-        for attempt in range(max_retries):
-            try:
-                # Timeout added to prevent hanging requests
-                response = self.session.get(url, timeout=10)
-                
-                if response.status_code == 200:
-                    # Parse the HTML using BeautifulSoup
-                    soup = bs(response.text, 'html.parser')
-                    ass = soup.find_all('a')
-                    
-                    for a in ass:
-                        content = a.get('href')
-                        if content and content.startswith('magnet:?'):
-                            return content
-                    print("No magnet link found in the response.")
-                    return None
-                else:
-                    print(f"Error: Received status code {response.status_code}")
-                    return None
-            except RequestException as e:
-                print(f"Attempt {attempt + 1}: Request failed with error: {e}")
-                
-                if attempt < max_retries - 1:  # Don't sleep after the last attempt
-                    delay = initial_delay * (backoff_factor ** attempt)
-                    print(f"Retrying in {delay} seconds...")
-                    time.sleep(delay)
-                else:
-                    print("Max retries reached. Giving up.")
-                    return None
+        response = self.session.get(url)
+        if response.status_code == 200:
+            torrent = Torrent.from_string(response.content)
+            return torrent
+        else:
+            print(f"Error: Received status code {response.status_code}")
+            return None
+
+
+   
