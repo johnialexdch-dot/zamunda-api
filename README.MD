@@ -78,11 +78,11 @@ python main.py
 | `user`        | `str`   | Потребителско име за Zamunda.                         |
 | `password`    | `str`   | Парола за Zamunda.                                    |
 | `force_search`| `bool`  | Принуждава ново търсене, като игнорира кеша.          |
-| `provide_magnet`| `bool`| Ако е True, включва магнитни линкове в резултата.     |
+| `provide_infohash`| `bool`| Ако е True, включва infohash.     |
 
 #### Примерна заявка
 ```bash
-curl "http://localhost:8000/search?q=Deadpool%202024&user={вашето_име}&password={вашата_парола}&force_search=true&provide_magnet=true"
+curl "http://localhost:8000/search?q=Deadpool%202024&user={вашето_име}&password={вашата_парола}&force_search=true&provide_infohash=true"
 ```
 
 #### Примерен отговор
@@ -93,7 +93,8 @@ curl "http://localhost:8000/search?q=Deadpool%202024&user={вашето_име}&
     "magnetlink": "magnet:?xt=urn:btih:...",
     "seeders": "673",
     "bg_audio": false,
-    "size": "3.56GB"
+    "size": "3.56GB",
+    "provide_infohash": "888"
   }
 ]
 ```

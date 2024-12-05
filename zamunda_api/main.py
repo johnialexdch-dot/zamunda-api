@@ -75,7 +75,6 @@ def search(
     user: str,
     password: str,
     force_search: bool = False,
-    provide_magnet: bool = False,
     provide_infohash: bool = False
     ):
     """
@@ -93,7 +92,7 @@ def search(
         dict: Search results.
     """
     # Generate cache key
-    cache_key = f"{q}-{provide_magnet}-{provide_infohash}"
+    cache_key = f"{q}-{provide_infohash}"
     current_time = datetime.now()
 
     if not force_search:
@@ -109,7 +108,7 @@ def search(
 
     # Perform the search
     logger.info("Performing search")
-    response = z.search(q, user, password, provide_magnet=provide_magnet, provide_infohash=provide_infohash)
+    response = z.search(q, user, password, provide_infohash)
 
     # Cache the response
     cache[cache_key] = {
