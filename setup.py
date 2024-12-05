@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="zamunda-api",
-    version="0.1.5",  # Update this with your versioning
+    version="0.1.6",  # Update this with your versioning
     description="A Python API for interacting with Zamunda",
     long_description="",
     long_description_content_type="text/markdown",
@@ -14,7 +14,8 @@ setup(
         "beautifulsoup4==4.12.3",
         "fastapi==0.115.5",
         "Requests==2.32.3",
-        "uvicorn==0.32.1"
+        "uvicorn==0.32.1",
+        "torrentool==1.0.2",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
