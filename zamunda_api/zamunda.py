@@ -82,7 +82,11 @@ class Zamunda:
         :param password: The password to log in with.
         :param provide_magnet: Whether to provide the magnet link or the download page link.
         """
-        self.login(user,password)
+        try:
+            self.login(user,password)
+        except Exception as e:
+            print(f"Error: {e}")
+            return []
         data = []
         ss=ss.replace(" ","+")
         url = f"{self.base}/bananas?search={ss}&gotonext=1&incldead=&field=name&sort=9&type=desc"
