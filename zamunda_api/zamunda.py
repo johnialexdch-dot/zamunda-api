@@ -148,8 +148,13 @@ class Zamunda:
             torrent = Torrent.from_string(response.content)
             return torrent
         else:
-            print(f"Error: Received status code {response.status_code}")
-            return None
+            print(f"Error: Received status code {response.status_code} for {href}")
+            # return DummyTorrent object
+            class DummyTorrent:
+                magnet_link = None
+                info_hash = None
+
+            return DummyTorrent()
 
 
    
