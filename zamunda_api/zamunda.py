@@ -27,12 +27,21 @@ class Zamunda:
         self.base = 'https://zamunda.net'
 
     def login(self, user, password, retries=3, backoff_factor=2):
-        """Logs in to the Zamunda website with retry logic and error handling."""
+        """
+        Logs in to the Zamunda website with retry logic and error handling.
+        :param user: The username to log in with.
+        :param password: The password to log in with.
+        :param retries: Number of retry attempts for connection errors.
+        :param backoff_factor: Factor by which the wait time increases after each retry.
+        """
         if not user or not password:
             raise ValueError("Username and password cannot be empty.")
-        
+
         takelogin_url = f"{self.base}/takelogin.php"
-        payload = {'username': user, 'password': password}
+        payload = {
+            'username': user,
+            'password': password
+        }
 
         attempt = 0
         while attempt <= retries:
@@ -40,11 +49,11 @@ class Zamunda:
                 # Post the login credentials
                 response = self.session.post(
                     takelogin_url,
-                    headers=login_headers,  
+                    headers=login_headers,
                     data=payload,
-                    timeout=10 
+                    timeout=10
                 )
-
+                
                 # Check if login was successful
                 if response.status_code == 200:
                     print("Login successful.")
@@ -53,29 +62,18 @@ class Zamunda:
                     response.raise_for_status()
 
             except ConnectionError as e:
-                # If connection is reset or lost, try again with an exponential backoff
                 attempt += 1
                 if attempt > retries:
                     print("Max retries reached. Unable to connect.")
                     raise
                 print(f"Connection error: {e}. Retrying in {backoff_factor ** attempt} seconds...")
                 time.sleep(backoff_factor ** attempt)
-
             except Timeout as e:
-                print(f"Request timed out: {e}. Retrying...")
-                attempt += 1
-                if attempt > retries:
-                    print("Max retries reached due to timeout.")
-                    raise
-                time.sleep(backoff_factor ** attempt)
-
+                print(f"Request timed out: {e}")
+                raise
             except RequestException as e:
-                print(f"Request error: {e}. Retrying...")
-                attempt += 1
-                if attempt > retries:
-                    print("Max retries reached.")
-                    raise
-                time.sleep(backoff_factor ** attempt)
+                print(f"An error occurred: {e}")
+                raise
 
         raise RuntimeError("Login failed after multiple attempts.")
     
