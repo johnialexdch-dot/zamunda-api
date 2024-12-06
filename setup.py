@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="zamunda-api",
-    version="0.1.8",  # Update this with your versioning
+    version="0.1.9",  # Update this with your versioning
     description="A Python API for interacting with Zamunda",
     long_description="",
     long_description_content_type="text/markdown",
