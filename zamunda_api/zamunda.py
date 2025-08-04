@@ -92,7 +92,7 @@ class Zamunda:
             return None
         data = []
         ss=ss.replace(" ","+")
-        url = f"{self.base}/bananas?search={ss}&gotonext=1&incldead=&field=name&sort=9&type=desc"
+        url = f"{self.base}/bananas?{ss}&gotonext=1&incldead=&field=name&sort=9&type=desc"
 
         response = self.session.get(url)
         if response.status_code != 200:
@@ -155,6 +155,7 @@ class Zamunda:
                 info_hash = None
 
             return DummyTorrent()
+
 
 
    
