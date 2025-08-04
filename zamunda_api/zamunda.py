@@ -156,6 +156,43 @@ class Zamunda:
 
             return DummyTorrent()
 
+def search(self, query: str) -> list[dict]:
+    # Новият search URL (без ?search=)
+    url = f"{self.base_url}/browse?cat=movies&incldead=0&search={query}"
+    resp = self.session.get(url)
+
+    # Запиши HTML за анализ
+    with open("zamunda_search_result.html", "w", encoding="utf-8") as f:
+        f.write(resp.text)
+
+    soup = bs(resp.text, "html.parser")
+
+    # Търси таблица (стар метод)
+    table = soup.find("table", {"class": "tracker"})
+
+    if not table:
+        print("No table found")
+        return []
+
+    results = []
+    for row in table.find_all("tr")[1:]:
+        cells = row.find_all("td")
+        if len(cells) < 5:
+            continue
+        title = cells[1].get_text(strip=True)
+        link = cells[1].find("a")["href"]
+        torrent_id = link.split("=")[-1]
+        magnet = f"https://zamunda.net/bananas/download.php?id={torrent_id}&name={title}.torrent"
+
+        results.append({
+            "title": title,
+            "infoHash": "",
+            "fileIdx": 0,
+            "sources": [magnet]
+        })
+
+    return results
 
 
    
+
