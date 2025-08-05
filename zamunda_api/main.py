@@ -19,7 +19,12 @@ except ImportError:
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.INFO)
 
-z = Zamunda()
+zamunda = Zamunda(
+    base_url="https://zamunda.net",
+    user="твоето_потребителско_име",
+    password="твоята_парола"
+)
+
 
 # Кеш
 cache = {}
@@ -117,4 +122,5 @@ def stream(type: str, id: str, request: Request):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0")  # Махни port=8000
+
 
