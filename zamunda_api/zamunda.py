@@ -1,3 +1,5 @@
+from zamunda_api.login_headers import login_headers
+
 """
 zamunda.py
 This module provides a class `Zamunda` 
@@ -169,3 +171,4 @@ class Zamunda:
                     })
 
         return data
+
