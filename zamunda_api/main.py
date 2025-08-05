@@ -21,8 +21,8 @@ logger.setLevel(logging.INFO)
 
 zamunda = Zamunda(
     base_url="https://zamunda.net",
-    user="твоето_потребителско_име",
-    password="твоята_парола"
+    user="coyec75395",
+    password="rxM6N.h2N4aYe7_"
 )
 
 
@@ -122,5 +122,6 @@ def stream(type: str, id: str, request: Request):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0")  # Махни port=8000
+
 
 
