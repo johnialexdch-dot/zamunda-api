@@ -1,8 +1,26 @@
 import re
 import requests
 from bs4 import BeautifulSoup as bs
-from login_headers import login_headers
 
+# Headers за логин в Zamunda (актуални към 2025)
+login_headers = {
+    'authority': 'zamunda.net',
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'accept-language': 'en-US,en;q=0.9,bg;q=0.8,de;q=0.7',
+    'cache-control': 'max-age=0',
+    'content-type': 'application/x-www-form-urlencoded',
+    'origin': 'https://zamunda.net',
+    'referer': 'https://zamunda.net/login.php',
+    'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'document',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-site': 'same-origin',
+    'sec-fetch-user': '?1',
+    'upgrade-insecure-requests': '1',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+}
 
 class zamunda():
     def __init__(self, base_url, user, password):
@@ -82,12 +100,13 @@ class zamunda():
 
 
 # ТЕСТ:
-zamunda_instance = zamunda(
-    base_url="https://zamunda.net",
-    user="coyec75395",
-    password="rxM6N.h2N4aYe7_"
-)
+if __name__ == "__main__":
+    zamunda_instance = zamunda(
+        base_url="https://zamunda.net",
+        user="coyec75395",
+        password="rxM6N.h2N4aYe7_"
+    )
 
-results = zamunda_instance.search("john wick")
-for r in results:
-    print(r)
+    results = zamunda_instance.search("john wick")
+    for r in results:
+        print(r)
