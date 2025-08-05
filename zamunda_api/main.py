@@ -16,14 +16,15 @@ try:
 except ImportError:
     from zamunda import Zamunda
 
-logger = logging.getLogger("uvicorn")
-logger.setLevel(logging.INFO)
-
 zamunda = Zamunda(
     base_url="https://zamunda.net",
     user="coyec75395",
     password="rxM6N.h2N4aYe7_"
 )
+
+
+logger = logging.getLogger("uvicorn")
+logger.setLevel(logging.INFO)
 
 # Кеш
 cache = {}
@@ -120,3 +121,4 @@ def stream(type: str, id: str, request: Request):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0")
+
