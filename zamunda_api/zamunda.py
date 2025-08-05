@@ -1,4 +1,4 @@
-from zamunda_api.login_headers import login_headers
+from login_headers import login_headers
 
 """
 zamunda.py
@@ -171,4 +171,5 @@ class Zamunda:
                     })
 
         return data
+
 
