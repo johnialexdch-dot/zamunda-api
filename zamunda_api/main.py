@@ -25,29 +25,27 @@ zamunda = Zamunda(
     password="rxM6N.h2N4aYe7_"
 )
 
-
 # Кеш
 cache = {}
 CACHE_EXPIRATION = timedelta(minutes=60)
 
-def app_lifespan(_: FastAPI):
-    def cleanup_cache():
-        while True:
-            current_time = datetime.now()
-            keys_to_delete = [
-                key for key, value in cache.items()
-                if value['timestamp'] < current_time - CACHE_EXPIRATION
-            ]
-            if keys_to_delete:
-                logger.info("Cleaning up %d expired cache entries", len(keys_to_delete))
-            for key in keys_to_delete:
-                del cache[key]
-                logger.info("Deleted expired cache entry: %s", key)
-            threading.Event().wait(300)  # 5 минути
-    threading.Thread(target=cleanup_cache, daemon=True).start()
-    yield
+def cleanup_cache():
+    while True:
+        current_time = datetime.now()
+        keys_to_delete = [
+            key for key, value in cache.items()
+            if value['timestamp'] < current_time - CACHE_EXPIRATION
+        ]
+        if keys_to_delete:
+            logger.info("Cleaning up %d expired cache entries", len(keys_to_delete))
+        for key in keys_to_delete:
+            del cache[key]
+            logger.info("Deleted expired cache entry: %s", key)
+        threading.Event().wait(300)  # 5 минути
 
-app = FastAPI(lifespan=app_lifespan)
+threading.Thread(target=cleanup_cache, daemon=True).start()
+
+app = FastAPI()
 
 @app.get("/")
 def read_root():
@@ -77,7 +75,7 @@ def search(
 
     try:
         logger.info("Performing Zamunda search for: %s", q)
-        response = z.search(q, user, password, provide_infohash)
+        response = zamunda.search(q, user, password, provide_infohash)
     except Exception as e:
         logger.error("Search failed: %s", e)
         return JSONResponse(status_code=500, content={"error": "Search failed"})
@@ -102,7 +100,7 @@ def stream(type: str, id: str, request: Request):
     logger.info(f"Stremio stream request: {type=} {id=}")
 
     try:
-        results = z.search(id, user, password, provide_infohash=True)
+        results = zamunda.search(id, user, password, provide_infohash=True)
     except Exception as e:
         logger.error("Stremio search error: %s", e)
         return JSONResponse(status_code=500, content={"error": "Search failed"})
@@ -121,7 +119,4 @@ def stream(type: str, id: str, request: Request):
     return streams
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0")  # Махни port=8000
-
-
-
+    uvicorn.run(app, host="0.0.0.0")
